@@ -83,7 +83,7 @@ body {
 </head>
 <body>
 
-<p>© Sarcastic bot</p>
+# How to use me...<img src="https://raw.githubusercontent.com/Sarcasticbot/Sarcasticbot.github.io/main/assets/emojibest_com_AnimatedSticker (2).gif"/>
 
 <div></div>
 
