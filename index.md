@@ -1,73 +1,76 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Animate Background</title>
-  <style>
-    body {
-      overflow: hidden;
-    }
+	<title>Biodata</title>
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+		}
 
-    .background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
+		.container {
+			position: relative;
+			width: 100%;
+			height: 100vh;
+			background-color: #000;
+		}
 
-    .water-wave {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: radial-gradient(circle, #0099ff, #0000ff);
-      animation: wave 5s ease-in-out infinite;
-    }
+		.star {
+			position: absolute;
+			width: 2px;
+			height: 2px;
+			background-color: #FFF;
+			border-radius: 50%;
+			animation: twinkling-stars linear infinite;
+		}
 
-    @keyframes wave {
-      0% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
-      100% {
-        transform: translateY(0);
-      }
-    }
+		@keyframes twinkling-stars {
+			0%   { opacity: 1; }
+			50%  { opacity: 0.5; }
+			100% { opacity: 1; }
+		}
 
-    .stars {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url('https://cdn.jsdelivr.net/gh/Ashwinvalento/cartoon-avatar@latest/assets/images/male/45.png');
-      animation: twinkling 5s infinite;
-    }
+		.display {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 80%;
+			height: 70vh;
+			background-color: rgba(255, 255, 255, 0.9);
+			border-radius: 10px;
+			padding: 20px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+		}
 
-    @keyframes twinkling {
-      0% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0;
-      }
-      100% {
-        opacity: 1;
-      }
-    }
-  </style>
+		h1 {
+			text-align: center;
+			font-size: 24px;
+			margin-top: 0;
+		}
+
+		p {
+			line-height: 1.6;
+			font-size: 16px;
+			text-align: justify;
+		}
+	</style>
 </head>
 <body>
-  <div class="background">
-    <div class="water-wave"></div>
-    <div class="stars"></div>
-  </div>
-  
-  <!-- Rest of your content goes here -->
+	<div class="container">
+		<div class="display">
+			<h1>Biodata</h1>
+			<p>
+				Your biodata information goes here.
+			</p>
+		</div>
 
+		<!-- Twinkling Stars -->
+		<div class="star" style="top: 50px; left: 100px;"></div>
+		<div class="star" style="top: 150px; left: 250px;"></div>
+		<div class="star" style="top: 200px; left: 500px;"></div>
+		<!-- Add more stars as desired -->
+
+	</div>
 </body>
 </html>
