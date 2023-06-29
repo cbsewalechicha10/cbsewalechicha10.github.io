@@ -15,19 +15,20 @@
 			background-color: #000;
 		}
 
-		.star {
+		.star-background {
 			position: absolute;
-			width: 2px;
-			height: 2px;
-			background-color: #FFF;
-			border-radius: 50%;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image: url('twinkling_stars.jpg');
+			background-repeat: repeat;
 			animation: twinkling-stars linear infinite;
 		}
 
 		@keyframes twinkling-stars {
-			0%   { opacity: 1; }
-			50%  { opacity: 0.5; }
-			100% { opacity: 1; }
+			from { opacity: 1; }
+			to { opacity: 0.5; }
 		}
 
 		.display {
@@ -41,6 +42,21 @@
 			border-radius: 10px;
 			padding: 20px;
 			box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+		}
+
+		@keyframes star-pop-up {
+			0% { transform: scale(0); opacity: 0; }
+			50% { transform: scale(1.2); opacity: 1; }
+			100% { transform: scale(1); opacity: 1; }
+		}
+
+		.star {
+			position: absolute;
+			width: 8px;
+			height: 8px;
+			background-color: #FFF;
+			border-radius: 50%;
+			animation: star-pop-up 2s infinite;
 		}
 
 		h1 {
@@ -58,6 +74,7 @@
 </head>
 <body>
 	<div class="container">
+		<div class="star-background"></div>
 		<div class="display">
 			<h1>Biodata</h1>
 			<p>
@@ -65,7 +82,7 @@
 			</p>
 		</div>
 
-		<!-- Twinkling Stars -->
+		<!-- Popping up Stars -->
 		<div class="star" style="top: 50px; left: 100px;"></div>
 		<div class="star" style="top: 150px; left: 250px;"></div>
 		<div class="star" style="top: 200px; left: 500px;"></div>
