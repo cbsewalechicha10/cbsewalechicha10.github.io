@@ -71,21 +71,3 @@
 
 </body>
 </html>
-
-</head>
-<body>
-  <div class="bio-data">
-    <h1>Bio Data</h1>
-    <p>Name: Vishesh verma</p>
-    <p>Age: 10</p>
-    <p>Occupation: Nalla</p>
-  </div>
-
-  <div class="contact-info">
-    <h2>Contact Information</h2>
-    <p>Email: tooerstage10@gmail.com</p>
-    <p>Phone: idk </p>
-    <p>Address: India </p>
-  </div>
-</body>
-</html>
