@@ -1,53 +1,36 @@
+<!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-.dropbtn {
-  background-color: #4772F7;
-  color: white;
-  padding: 16px;
-  font-size: 16px;
-  border: none;
-}
+  <title>Bio Data and Contact</title>
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
 
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
+    .bio-data {
+      animation: fadeIn 2s;
+    }
 
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-}
-
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-.dropdown-content a:hover {background-color: #ddd;}
-
-.dropdown:hover .dropdown-content {display: block;}
-
-.dropdown:hover .dropbtn {background-color: #3e8e41;}
-</style>
+    .contact-info {
+      animation: fadeIn 2s;
+      animation-delay: 1s;
+    }
+  </style>
 </head>
 <body>
-
-<div class="dropdown">
-  <button class="dropbtn">Dropdown</button>
-  <div class="dropdown-content">
-    <a href="## Status">Status</a>
-    <a href="## Features ✨">Features</a>
-    <a href="## <img height="40" src="https://raw.githubusercontent.com/innng/innng/master/assets/kyubey.gif"/>Contact Us ❄️">Contact</a>
+  <div class="bio-data">
+    <h1>Bio Data</h1>
+    <p>Name: Vishesh verma</p>
+    <p>Age: 10</p>
+    <p>Occupation: Nalla</p>
   </div>
-</div>
 
+  <div class="contact-info">
+    <h2>Contact Information</h2>
+    <p>Email: tooerstage10@gmail.com</p>
+    <p>Phone: idk </p>
+    <p>Address: India </p>
+  </div>
 </body>
 </html>
