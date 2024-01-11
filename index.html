@@ -1,30 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Webcam Access</title>
-    <style>
-        #container {
-            display: flex;
-            justify-content: space-around;
-        }
-        #webcam, #lover-webcam {
-            width: 45%;
-        }
-    </style>
+    <title>Screen and Webcam Access</title>
 </head>
 <body>
-    <div id="container">
-        <video id="webcam" autoplay></video>
-        <video id="lover-webcam" autoplay></video>
-    </div>
+    <video id="webcam" autoplay></video>
+    <video id="screen" autoplay></video>
 
     <script>
-        const video = document.getElementById('webcam');
+        const webcamVideo = document.getElementById('webcam');
+        const screenVideo = document.getElementById('screen');
+
+        // Request both video and screen sharing
+        const constraints = {
+            video: true,
+            audio: true, // Add this line if you want to capture audio as well
+        };
 
         if (navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({ video: true })
+            navigator.mediaDevices.getUserMedia(constraints)
                 .then(function (stream) {
-                    video.srcObject = stream;
+                    // Split the stream into two: one for webcam and one for screen
+                    webcamVideo.srcObject = new MediaStream([stream.getVideoTracks()[0]]);
+                    
+                    // Add screen sharing track
+                    const screenTrack = stream.getTracks().find(track => track.kind === 'video' && track !== stream.getVideoTracks()[0]);
+                    if (screenTrack) {
+                        screenVideo.srcObject = new MediaStream([screenTrack]);
+                    }
                 })
                 .catch(function (error) {
                     console.log("Something went wrong!");
@@ -33,20 +36,3 @@
     </script>
 </body>
 </html>
-
-const express = require('express');
-const app = express();
-const server = require('http').Server(app);
-const io = require('socket.io')(server);
-
-app.get('/:room', (req, res) => {
-    res.send(`Welcome to room ${req.params.room}`);
-});
-
-io.on('connection', (socket) => {
-    socket.on('join-room', (roomId) => {
-        socket.join(roomId);
-    });
-});
-
-server.listen(3000);
