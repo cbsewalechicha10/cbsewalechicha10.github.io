@@ -1,33 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Screen and Webcam Access</title>
+    <title>Screen Sharing</title>
 </head>
 <body>
-    <video id="webcam" autoplay></video>
     <video id="screen" autoplay></video>
 
     <script>
-        const webcamVideo = document.getElementById('webcam');
         const screenVideo = document.getElementById('screen');
 
-        // Request both video and screen sharing
         const constraints = {
-            video: true,
-            audio: true, // Add this line if you want to capture audio as well
+            video: {
+                cursor: "always" // Show cursor in the screen sharing
+            },
+            audio: true // Add this line if you want to capture audio as well
         };
 
-        if (navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia(constraints)
+        if (navigator.mediaDevices.getDisplayMedia) {
+            navigator.mediaDevices.getDisplayMedia(constraints)
                 .then(function (stream) {
-                    // Split the stream into two: one for webcam and one for screen
-                    webcamVideo.srcObject = new MediaStream([stream.getVideoTracks()[0]]);
-                    
-                    // Add screen sharing track
-                    const screenTrack = stream.getTracks().find(track => track.kind === 'video' && track !== stream.getVideoTracks()[0]);
-                    if (screenTrack) {
-                        screenVideo.srcObject = new MediaStream([screenTrack]);
-                    }
+                    screenVideo.srcObject = stream;
                 })
                 .catch(function (error) {
                     console.log("Something went wrong!");
@@ -36,3 +28,4 @@
     </script>
 </body>
 </html>
+
