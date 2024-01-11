@@ -1,19 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Screen Sharing</title>
+    <title>Screen and Webcam Sharing</title>
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .half {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .box {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #ccc;
+            margin: 5px;
+        }
+
+        #screen {
+            flex: 1;
+        }
+
+        #webcam {
+            width: 100%;
+            height: 100%;
+        }
+
+        #blankBox {
+            width: 100%;
+            height: 100%;
+            background-color: #f0f0f0;
+        }
+    </style>
 </head>
 <body>
-    <video id="screen" autoplay></video>
+    <div class="half">
+        <video id="screen" autoplay></video>
+    </div>
+    <div class="half">
+        <div class="box">
+            <video id="webcam" autoplay></video>
+        </div>
+        <div class="box" id="blankBox"></div>
+    </div>
 
     <script>
         const screenVideo = document.getElementById('screen');
+        const webcamVideo = document.getElementById('webcam');
+        const blankBox = document.getElementById('blankBox');
 
         const constraints = {
             video: {
-                cursor: "always" // Show cursor in the screen sharing
+                cursor: 'always'
             },
-            audio: true // Add this line if you want to capture audio as well
+            audio: true
         };
 
         if (navigator.mediaDevices.getDisplayMedia) {
@@ -22,10 +69,19 @@
                     screenVideo.srcObject = stream;
                 })
                 .catch(function (error) {
-                    console.log("Something went wrong!");
+                    console.log('Error accessing screen:', error);
+                });
+        }
+
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    webcamVideo.srcObject = stream;
+                })
+                .catch(function (error) {
+                    console.log('Error accessing webcam:', error);
                 });
         }
     </script>
 </body>
 </html>
-
