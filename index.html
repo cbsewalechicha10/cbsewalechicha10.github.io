@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webcam and Random Krishna Image</title>
+    <title>Webcam and YouTube Video</title>
     <style>
         body {
             display: flex;
@@ -37,10 +37,9 @@
             border-radius: 10px;
         }
 
-        #krishnaImage {
+        #youtubeVideo {
             width: 100%;
             height: 100%;
-            object-fit: cover;
             border-radius: 10px;
         }
     </style>
@@ -53,13 +52,14 @@
     </div>
     <div class="half">
         <div class="box">
-            <img id="krishnaImage" src="" alt="Random Krishna Image">
+            <!-- Replace 'YOUTUBE_VIDEO_ID' with the actual ID of the YouTube video you want to embed -->
+            <div id="youtubeVideo"></div>
         </div>
     </div>
 
     <script>
         const webcamVideo = document.getElementById('webcam');
-        const krishnaImage = document.getElementById('krishnaImage');
+        const youtubeVideoContainer = document.getElementById('youtubeVideo');
 
         const constraints = {
             video: true,
@@ -76,14 +76,32 @@
                 });
         }
 
-        // Fetch a random Krishna image from Unsplash Source API
-        fetch('https://source.unsplash.com/featured/?krishna')
-            .then(response => {
-                krishnaImage.src = response.url;
-            })
-            .catch(error => {
-                console.log('Error fetching Krishna image:', error);
+        // Replace 'YOUTUBE_VIDEO_ID' with the actual ID of the YouTube video you want to embed
+        const youtubeVideoId = 'b5oXyIMJ--Y';
+
+        // Load the YouTube iFrame API script
+        const script = document.createElement('script');
+        script.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(script);
+
+        // Function called when the API script is loaded
+        window.onYouTubeIframeAPIReady = function () {
+            new YT.Player('youtubeVideo', {
+                videoId: youtubeVideoId,
+                playerVars: {
+                    autoplay: 1,  // Auto-play the video
+                    loop: 1,      // Loop the video
+                    controls: 0,  // Hide video controls
+                    showinfo: 0,  // Hide video title and uploader
+                    modestbranding: 1  // Remove YouTube logo
+                },
+                events: {
+                    onReady: function (event) {
+                        event.target.playVideo();  // Auto-play the video
+                    }
+                }
             });
+        };
     </script>
 </body>
 </html>
