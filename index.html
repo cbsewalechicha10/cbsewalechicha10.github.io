@@ -43,22 +43,6 @@
             object-fit: cover;
             border-radius: 10px;
         }
-
-        .button-container {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 10px;
-        }
-
-        .button {
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            background-color: #4CAF50;
-            color: white;
-        }
     </style>
 </head>
 <body>
@@ -66,64 +50,40 @@
         <div class="box">
             <video id="webcam" autoplay></video>
         </div>
-        <div class="button-container">
-            <button class="button" onclick="toggleWebcam()">Toggle Webcam</button>
-            <button class="button" onclick="toggleMicrophone()">Toggle Microphone</button>
-        </div>
     </div>
     <div class="half">
         <div class="box">
             <img id="krishnaImage" src="" alt="Random Krishna Image">
-        </div>
-        <div class="button-container">
-            <button class="button" onclick="changeKrishnaImage()">Change Image</button>
         </div>
     </div>
 
     <script>
         const webcamVideo = document.getElementById('webcam');
         const krishnaImage = document.getElementById('krishnaImage');
-        let webcamEnabled = true;
-        let microphoneEnabled = true;
 
         const constraints = {
             video: true,
-            audio: true
+            audio: false
         };
 
-        function toggleWebcam() {
-            webcamEnabled = !webcamEnabled;
-            if (webcamEnabled) {
-                navigator.mediaDevices.getUserMedia(constraints)
-                    .then(function (stream) {
-                        webcamVideo.srcObject = stream;
-                    })
-                    .catch(function (error) {
-                        console.log('Error accessing webcam:', error);
-                    });
-            } else {
-                const tracks = webcamVideo.srcObject.getTracks();
-                tracks.forEach(track => track.stop());
-                webcamVideo.srcObject = null;
-            }
-        }
-
-        function toggleMicrophone() {
-            microphoneEnabled = !microphoneEnabled;
-            const audioTracks = webcamVideo.srcObject.getAudioTracks();
-            audioTracks[0].enabled = microphoneEnabled;
-        }
-
-        function changeKrishnaImage() {
-            // Fetch a new random Krishna image from Unsplash Source API
-            fetch('https://source.unsplash.com/featured/?krishna')
-                .then(response => {
-                    krishnaImage.src = response.url;
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(function (stream) {
+                    webcamVideo.srcObject = stream;
                 })
-                .catch(error => {
-                    console.log('Error fetching Krishna image:', error);
+                .catch(function (error) {
+                    console.log('Error accessing webcam:', error);
                 });
         }
+
+        // Fetch a random Krishna image from Unsplash Source API
+        fetch('https://source.unsplash.com/featured/?krishna')
+            .then(response => {
+                krishnaImage.src = response.url;
+            })
+            .catch(error => {
+                console.log('Error fetching Krishna image:', error);
+            });
     </script>
 </body>
 </html>
