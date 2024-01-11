@@ -33,3 +33,20 @@
     </script>
 </body>
 </html>
+
+const express = require('express');
+const app = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+
+app.get('/:room', (req, res) => {
+    res.send(`Welcome to room ${req.params.room}`);
+});
+
+io.on('connection', (socket) => {
+    socket.on('join-room', (roomId) => {
+        socket.join(roomId);
+    });
+});
+
+server.listen(3000);
