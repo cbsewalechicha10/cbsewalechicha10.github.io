@@ -10,9 +10,9 @@
             display: flex;
             height: 100vh;
             margin: 0;
-            background-color: #000;
+            background-color: #fff;
             font-family: 'Arial', sans-serif;
-            color: #fff;
+            color: #000;
         }
         .streaming {
             flex: 0.7;
@@ -45,10 +45,9 @@
             border-radius: 10px;
         }
         .button-container {
-            position: fixed;
+            position: absolute;
             bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
+            right: 10px;
             display: flex;
             gap: 10px;
         }
@@ -56,8 +55,8 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background-color: #fff;
-            color: #000;
+            background-color: #000;
+            color: #fff;
             border: none;
             display: flex;
             justify-content: center;
@@ -68,6 +67,11 @@
     </style>
 </head>
 <body>
+    <div class="streaming">
+        <div class="box">
+            <div id="youtubeVideo"></div>
+        </div>
+    </div>
     <div class="webcam">
         <div class="box">
             <video id="webcam1" autoplay></video>
@@ -75,15 +79,10 @@
         <div class="box">
             <video id="webcam2" autoplay></video>
         </div>
-    </div>
-    <div class="streaming">
-        <div class="box">
-            <div id="youtubeVideo"></div>
+        <div class="button-container">
+            <button class="button" id="micButton">🎙️</button>
+            <button class="button" id="camButton">📷</button>
         </div>
-    </div>
-    <div class="button-container">
-        <button class="button" id="micButton">🎙️</button>
-        <button class="button" id="camButton">📷</button>
     </div>
 
     <script>
@@ -110,7 +109,8 @@
                     console.log('Error accessing webcam:', error);
                 });
         }
-        const youtubeVideoId = 'b5oXyIMJ--Y';
+
+        const youtubeVideoId = prompt("Please enter the YouTube video ID:");
         const script = document.createElement('script');
         script.src = 'https://www.youtube.com/iframe_api';
         document.head.appendChild(script);
