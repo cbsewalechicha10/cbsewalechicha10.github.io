@@ -40,7 +40,12 @@
             border-radius: 10px;
         }
     </style>
-	@@ -53,13 +52,14 @@
+</head>
+<body>
+    <div class="half">
+        <div class="box">
+            <video id="webcam" autoplay></video>
+        </div>
     </div>
     <div class="half">
         <div class="box">
@@ -55,7 +60,15 @@
 
         const constraints = {
             video: true,
-	@@ -76,14 +76,32 @@
+            audio: false
+        };
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(function (stream) {
+                    webcamVideo.srcObject = stream;
+                })
+                .catch(function (error) {
+                    console.log('Error accessing webcam:', error);
                 });
         }
 
