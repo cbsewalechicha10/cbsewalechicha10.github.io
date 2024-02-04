@@ -36,10 +36,11 @@
         }
         #webcam1, #webcam2 {
             width: 100%;
-            height: 50%;
+            height: 100%;
             border-radius: 10px;
+            object-fit: cover;
         }
-        #youtubeVideo {
+        #streamingVideo {
             width: 100%;
             height: 100%;
             border-radius: 10px;
@@ -47,13 +48,14 @@
         .button-container {
             position: absolute;
             bottom: 10px;
-            right: 10px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            gap: 10px;
+            gap: 20px;
         }
         .button {
-            width: 50px;
-            height: 50px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             background-color: #000;
             color: #fff;
@@ -61,39 +63,48 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 20px;
+            font-size: 30px;
             cursor: pointer;
+        }
+        .button.on {
+            background-color: #fff;
+            color: #000;
         }
     </style>
 </head>
 <body>
     <div class="streaming">
         <div class="box">
-            <div id="youtubeVideo"></div>
+            <video id="streamingVideo" autoplay></video>
         </div>
     </div>
     <div class="webcam">
         <div class="box">
-            <video id="webcam1" autoplay></video>
+            <video id="webcam1" autoplay muted></video>
         </div>
         <div class="box">
-            <video id="webcam2" autoplay></video>
+            <video id="webcam2" autoplay muted></video>
         </div>
         <div class="button-container">
-            <button class="button" id="micButton">🎙️</button>
+            <button class="button" id="micButton">🎙</button>
             <button class="button" id="camButton">📷</button>
+            <button class="button" id="screenButton">🖥</button>
+            <button class="button" id="youtubeButton">🎥</button>
         </div>
     </div>
 
     <script>
         const webcamVideo1 = document.getElementById('webcam1');
         const webcamVideo2 = document.getElementById('webcam2');
-        const youtubeVideoContainer = document.getElementById('youtubeVideo');
+        const streamingVideo = document.getElementById('streamingVideo');
         const micButton = document.getElementById('micButton');
         const camButton = document.getElementById('camButton');
+        const screenButton = document.getElementById('screenButton');
+        const youtubeButton = document.getElementById('youtubeButton');
 
-        let isMicOn = true;
-        let isCamOn = true;
+        let isMicOn = false;
+        let isCamOn = false;
+        let player;
 
         const constraints = {
             video: true,
@@ -104,45 +115,75 @@
                 .then(function (stream) {
                     webcamVideo1.srcObject = stream;
                     webcamVideo2.srcObject = stream;
+                    webcamVideo1.srcObject.getAudioTracks()[0].enabled = isMicOn;
+                    webcamVideo2.srcObject.getAudioTracks()[0].enabled = isMicOn;
+                    webcamVideo1.srcObject.getVideoTracks()[0].enabled = isCamOn;
+                    webcamVideo2.srcObject.getVideoTracks()[0].enabled = isCamOn;
                 })
                 .catch(function (error) {
                     console.log('Error accessing webcam:', error);
                 });
         }
+        youtubeButton.addEventListener('click', function() {
+            const youtubeVideoId = prompt("Please enter the full YouTube link:");
+            const videoId = youtubeVideoId.split('v=')[1];
+            const ampersandPosition = videoId.indexOf('&');
+            if(ampersandPosition != -1) {
+              videoId = videoId.substring(0, ampersandPosition);
+            }
 
-        const youtubeVideoId = prompt("Please enter the YouTube video ID:");
-        const script = document.createElement('script');
-        script.src = 'https://www.youtube.com/iframe_api';
-        document.head.appendChild(script);
-        window.onYouTubeIframeAPIReady = function () {
-            new YT.Player('youtubeVideo', {
-                videoId: youtubeVideoId,
-                playerVars: {
-                    autoplay: 1,  
-                    loop: 1,      
-                    controls: 0,  
-                    showinfo: 0,  
-                    modestbranding: 1  
-                },
-                events: {
-                    onReady: function (event) {
-                        event.target.playVideo();  
+            const script = document.createElement('script');
+            script.src = 'https://www.youtube.com/iframe_api';
+            document.head.appendChild(script);
+            window.onYouTubeIframeAPIReady = function () {
+                player = new YT.Player('streamingVideo', {
+                    videoId: videoId,
+                    playerVars: {
+                        autoplay: 1,  
+                        loop: 1,      
+                        controls: 0,  
+                        showinfo: 0,  
+                        modestbranding: 1  
+                    },
+                    events: {
+                        onReady: function (event) {
+                            event.target.playVideo();  
+                        }
                     }
-                }
-            });
-        };
+                });
+            };
+        });
 
         micButton.addEventListener('click', function() {
             isMicOn = !isMicOn;
             webcamVideo1.srcObject.getAudioTracks()[0].enabled = isMicOn;
             webcamVideo2.srcObject.getAudioTracks()[0].enabled = isMicOn;
+            micButton.classList.toggle('on');
         });
 
         camButton.addEventListener('click', function() {
             isCamOn = !isCamOn;
             webcamVideo1.srcObject.getVideoTracks()[0].enabled = isCamOn;
             webcamVideo2.srcObject.getVideoTracks()[0].enabled = isCamOn;
+            camButton.classList.toggle('on');
+        });
+
+        screenButton.addEventListener('click', function() {
+            if (navigator.mediaDevices.getDisplayMedia) {
+                navigator.mediaDevices.getDisplayMedia({video: true})
+                    .then(function (stream) {
+                        if (player) {
+                            player.destroy();
+                        }
+                        streamingVideo.srcObject = stream;
+                    })
+                    .catch(function (error) {
+                        console.log('Error accessing screen:', error);
+                    });
+            } else {
+                alert('Screen sharing is not supported in this browser.');
+            }
         });
     </script>
 </body>
-</html>
+</html>        
