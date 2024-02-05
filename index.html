@@ -4,92 +4,94 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mai aur woh anandit</title>
+    <title>Sleek Video Hub</title>
     <style>
         body {
             display: flex;
             height: 100vh;
             margin: 0;
-            background-color: #fff;
-            font-family: 'Arial', sans-serif;
-            color: #000;
+            background-color: #282c34;
+            font-family: 'Roboto', sans-serif;
+            color: #fff;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
         .streaming {
             flex: 0.7;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         .webcam {
             flex: 0.3;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
         }
         .box {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid #ccc;
-            margin: 5px;
+            width: 100%;
+            height: 100%;
             border-radius: 10px;
             overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        #webcam1, #webcam2 {
+        video {
             width: 100%;
             height: 100%;
-            border-radius: 10px;
             object-fit: cover;
-        }
-        #streamingVideo {
-            width: 100%;
-            height: 100%;
             border-radius: 10px;
         }
         .button-container {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
+            margin-top: 20px;
             display: flex;
             gap: 20px;
         }
         .button {
-            width: 70px;
-            height: 70px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            background-color: #000;
-            color: #fff;
+            background-color: #61dafb;
+            color: #282c34;
             border: none;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 30px;
+            font-size: 20px;
             cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
         }
         .button.on {
-            background-color: #fff;
-            color: #000;
+            background-color: #282c34;
+            color: #61dafb;
         }
     </style>
 </head>
 <body>
-    <div class="streaming">
-        <div class="box">
-            <video id="streamingVideo" autoplay></video>
+    <div class="container">
+        <div class="streaming">
+            <div class="box">
+                <video id="streamingVideo" autoplay></video>
+            </div>
         </div>
-    </div>
-    <div class="webcam">
-        <div class="box">
-            <video id="webcam1" autoplay muted></video>
-        </div>
-        <div class="box">
-            <video id="webcam2" autoplay muted></video>
-        </div>
-        <div class="button-container">
-            <button class="button" id="micButton">🎙</button>
-            <button class="button" id="camButton">📷</button>
-            <button class="button" id="screenButton">🖥</button>
-            <button class="button" id="youtubeButton">🎥</button>
+        <div class="webcam">
+            <div class="box">
+                <video id="webcam1" autoplay muted></video>
+            </div>
+            <div class="box">
+                <video id="webcam2" autoplay muted></video>
+            </div>
+            <div class="button-container">
+                <button class="button" id="micButton">🎙</button>
+                <button class="button" id="camButton">📷</button>
+                <button class="button" id="screenButton">🖥</button>
+                <button class="button" id="youtubeButton">🎥</button>
+            </div>
         </div>
     </div>
 
@@ -126,9 +128,9 @@
         }
         youtubeButton.addEventListener('click', function() {
             const youtubeVideoId = prompt("Please enter the full YouTube link:");
-            const videoId = youtubeVideoId.split('v=')[1];
+            let videoId = youtubeVideoId.split('v=')[1];
             const ampersandPosition = videoId.indexOf('&');
-            if(ampersandPosition != -1) {
+            if(ampersandPosition !== -1) {
               videoId = videoId.substring(0, ampersandPosition);
             }
 
@@ -139,15 +141,15 @@
                 player = new YT.Player('streamingVideo', {
                     videoId: videoId,
                     playerVars: {
-                        autoplay: 1,  
-                        loop: 1,      
-                        controls: 0,  
-                        showinfo: 0,  
-                        modestbranding: 1  
+                        autoplay: 1,
+                        loop: 1,
+                        controls: 0,
+                        showinfo: 0,
+                        modestbranding: 1
                     },
                     events: {
                         onReady: function (event) {
-                            event.target.playVideo();  
+                            event.target.playVideo();
                         }
                     }
                 });
@@ -186,4 +188,4 @@
         });
     </script>
 </body>
-</html>        
+</html>
