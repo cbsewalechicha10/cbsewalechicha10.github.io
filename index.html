@@ -2,183 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mai aur woh anandit</title>
-    <style>
-        body {
-            display: flex;
-            height: 100vh;
-            margin: 0;
-            background-color: #fff;
-            font-family: 'Arial', sans-serif;
-            color: #000;
-        }
-        .streaming {
-            flex: 0.7;
-            display: flex;
-            flex-direction: column;
-        }
-        .webcam {
-            flex: 0.3;
-            display: flex;
-            flex-direction: column;
-        }
-        .box {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid #ccc;
-            margin: 5px;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        #webcam1, #webcam2 {
-            width: 100%;
-            height: 100%;
-            border-radius: 10px;
-            object-fit: cover;
-        }
-        #streamingVideo {
-            width: 100%;
-            height: 100%;
-            border-radius: 10px;
-        }
-        .button-container {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 20px;
-        }
-        .button {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background-color: #000;
-            color: #fff;
-            border: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 30px;
-            cursor: pointer;
-        }
-        .button.on {
-            background-color: #fff;
-            color: #000;
-        }
-    </style>
+    <title>Personal Info</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="streaming">
-        <div class="box">
-            <video id="streamingVideo" autoplay></video>
+    <div class="container">
+        <h1 class="fade-in">John Doe</h1>
+        <p class="slide-in">Web Developer</p>
+        <p class="bounce">Loves to create dynamic and responsive websites</p>
+        <button onclick="showMore()">More About Me</button>
+        <div id="more-info" class="hidden">
+            <p>Location: San Francisco, CA</p>
+            <p>Experience: 5 Years</p>
+            <p>Hobbies: Coding, Hiking, Photography</p>
         </div>
     </div>
-    <div class="webcam">
-        <div class="box">
-            <video id="webcam1" autoplay muted></video>
-        </div>
-        <div class="box">
-            <video id="webcam2" autoplay muted></video>
-        </div>
-        <div class="button-container">
-            <button class="button" id="micButton">🎙</button>
-            <button class="button" id="camButton">📷</button>
-            <button class="button" id="screenButton">🖥</button>
-            <button class="button" id="youtubeButton">🎥</button>
-        </div>
-    </div>
-
-    <script>
-        const webcamVideo1 = document.getElementById('webcam1');
-        const webcamVideo2 = document.getElementById('webcam2');
-        const streamingVideo = document.getElementById('streamingVideo');
-        const micButton = document.getElementById('micButton');
-        const camButton = document.getElementById('camButton');
-        const screenButton = document.getElementById('screenButton');
-        const youtubeButton = document.getElementById('youtubeButton');
-        let isMicOn = false;
-        let isCamOn = false;
-        let player;
-        const constraints = {
-            video: true,
-            audio: true
-        };
-        if (navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia(constraints)
-                .then(function (stream) {
-                    webcamVideo1.srcObject = stream;
-                    webcamVideo2.srcObject = stream;
-                    webcamVideo1.srcObject.getAudioTracks()[0].enabled = isMicOn;
-                    webcamVideo2.srcObject.getAudioTracks()[0].enabled = isMicOn;
-                    webcamVideo1.srcObject.getVideoTracks()[0].enabled = isCamOn;
-                    webcamVideo2.srcObject.getVideoTracks()[0].enabled = isCamOn;
-                })
-                .catch(function (error) {
-                    console.log('Error accessing webcam:', error);
-                });
-        }
-        youtubeButton.addEventListener('click', function() {
-            const youtubeVideoId = prompt("Please enter the full YouTube link:");
-            const videoId = youtubeVideoId.split('v=')[1];
-            const ampersandPosition = videoId.indexOf('&');
-            if(ampersandPosition != -1) {
-              videoId = videoId.substring(0, ampersandPosition);
-            }
-
-            const script = document.createElement('script');
-            script.src = 'https://www.youtube.com/iframe_api';
-            document.head.appendChild(script);
-            window.onYouTubeIframeAPIReady = function () {
-                player = new YT.Player('streamingVideo', {
-                    videoId: videoId,
-                    playerVars: {
-                        autoplay: 1,  
-                        loop: 1,      
-                        controls: 0,  
-                        showinfo: 0,  
-                        modestbranding: 1  
-                    },
-                    events: {
-                        onReady: function (event) {
-                            event.target.playVideo();  
-                        }
-                    }
-                });
-            };
-        });
-        micButton.addEventListener('click', function() {
-            isMicOn = !isMicOn;
-            webcamVideo1.srcObject.getAudioTracks()[0].enabled = isMicOn;
-            webcamVideo2.srcObject.getAudioTracks()[0].enabled = isMicOn;
-            micButton.classList.toggle('on');
-        });
-        camButton.addEventListener('click', function() {
-            isCamOn = !isCamOn;
-            webcamVideo1.srcObject.getVideoTracks()[0].enabled = isCamOn;
-            webcamVideo2.srcObject.getVideoTracks()[0].enabled = isCamOn;
-            camButton.classList.toggle('on');
-        });
-        screenButton.addEventListener('click', function() {
-            if (navigator.mediaDevices.getDisplayMedia) {
-                navigator.mediaDevices.getDisplayMedia({video: true})
-                    .then(function (stream) {
-                        if (player) {
-                            player.destroy();
-                        }
-                        streamingVideo.srcObject = stream;
-                    })
-                    .catch(function (error) {
-                        console.log('Error accessing screen:', error);
-                    });
-            } else {
-                alert('Screen sharing is not supported in this browser.');
-            }
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
+
