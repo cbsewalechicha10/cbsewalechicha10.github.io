@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Chat</title>
+    <title>Admin Chat System</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -53,9 +53,9 @@
     <div id="chat-container">
         <h2>Welcome to the Chat!</h2>
 
-        <div id="name-input">
+        <div id="login-input">
             <input type="text" id="username" placeholder="Enter your name" required>
-            <button onclick="saveName()">Submit</button>
+            <button onclick="login()">Submit</button>
         </div>
 
         <div id="chat-section" style="display:none;">
@@ -67,22 +67,31 @@
                 <button onclick="sendMessage()">Send</button>
             </div>
         </div>
-
     </div>
 
     <script>
         let username = '';
+        let isAdmin = false;
+        let messages = [];
 
-        // Save the username and start chat
-        function saveName() {
+        // Login logic
+        function login() {
             const nameInput = document.getElementById('username');
             username = nameInput.value.trim();
 
             if (username) {
-                document.getElementById('name-input').style.display = 'none';
-                document.getElementById('chat-section').style.display = 'block';
-                const messagesDiv = document.getElementById('messages');
-                messagesDiv.innerHTML += `<p><strong>${username}</strong> joined the chat!</p>`;
+                // Check if the user is the admin
+                if (username.toLowerCase() === 'admin') {
+                    isAdmin = true;
+                    document.getElementById('login-input').style.display = 'none';
+                    document.getElementById('chat-section').style.display = 'block';
+                    displayMessages();  // Admin can see all messages
+                } else {
+                    document.getElementById('login-input').style.display = 'none';
+                    document.getElementById('chat-section').style.display = 'block';
+                    const messagesDiv = document.getElementById('messages');
+                    messagesDiv.innerHTML += `<p><strong>${username}</strong> joined the chat!</p>`;
+                }
             }
         }
 
@@ -92,15 +101,34 @@
             const message = messageInput.value.trim();
 
             if (message) {
-                const messagesDiv = document.getElementById('messages');
-                const newMessage = document.createElement('p');
-                newMessage.innerHTML = `<strong>${username}:</strong> ${message}`;
-                messagesDiv.appendChild(newMessage);
-                messageInput.value = '';  // Clear the input field
+                // Store the message in an array
+                const messageObject = {
+                    user: username,
+                    text: message,
+                };
+                messages.push(messageObject);
 
-                // Scroll to the bottom of the messages div
+                // Show the message to the user
+                const messagesDiv = document.getElementById('messages');
+                if (isAdmin) {
+                    displayMessages();  // Admin can see all messages
+                } else {
+                    messagesDiv.innerHTML += `<p>Your message has been sent.</p>`;
+                }
+
+                messageInput.value = '';  // Clear the input field
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
             }
+        }
+
+        // Function to display all messages to the admin
+        function displayMessages() {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = '';  // Clear existing messages
+            messages.forEach(msg => {
+                messagesDiv.innerHTML += `<p><strong>${msg.user}:</strong> ${msg.text}</p>`;
+            });
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
     </script>
 
