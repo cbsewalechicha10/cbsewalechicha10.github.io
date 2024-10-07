@@ -80,8 +80,8 @@
             username = nameInput.value.trim();
 
             if (username) {
-                // Check if the user is the admin
-                if (username.toLowerCase() === 'admin') {
+                // Check if the user is "samay" (admin)
+                if (username.toLowerCase() === 'samay') {
                     isAdmin = true;
                     document.getElementById('login-input').style.display = 'none';
                     document.getElementById('chat-section').style.display = 'block';
@@ -121,7 +121,7 @@
             }
         }
 
-        // Function to display all messages to the admin
+        // Function to display all messages to the admin ("samay")
         function displayMessages() {
             const messagesDiv = document.getElementById('messages');
             messagesDiv.innerHTML = '';  // Clear existing messages
