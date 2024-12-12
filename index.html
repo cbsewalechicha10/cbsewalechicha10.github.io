@@ -2,135 +2,183 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Chat System</title>
+    <title>Mai aur woh anandit</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-        }
-        #chat-container {
-            width: 50%;
-            margin: auto;
-            border: 1px solid black;
-            padding: 10px;
-            margin-top: 50px;
-            background-color: #f9f9f9;
-        }
-        #messages {
-            height: 300px;
-            border: 1px solid black;
-            overflow-y: auto;
-            margin-bottom: 10px;
-            padding: 10px;
-            background-color: #ffffff;
-        }
-        #message-input {
             display: flex;
-            margin-bottom: 10px;
+            height: 100vh;
+            margin: 0;
+            background-color: #fff;
+            font-family: 'Arial', sans-serif;
+            color: #000;
         }
-        #message-input input {
-            width: 80%;
-            padding: 10px;
+        .streaming {
+            flex: 0.7;
+            display: flex;
+            flex-direction: column;
+        }
+        .webcam {
+            flex: 0.3;
+            display: flex;
+            flex-direction: column;
+        }
+        .box {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            margin: 5px;
+            border-radius: 10px;
+            overflow: hidden;
         }
-        #message-input button {
-            width: 20%;
-            padding: 10px;
-            background-color: #28a745;
-            color: white;
+        #webcam1, #webcam2 {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+        #streamingVideo {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+        .button-container {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+        }
+        .button {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: #000;
+            color: #fff;
             border: none;
-            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
             cursor: pointer;
         }
-        #message-input button:hover {
-            background-color: #218838;
+        .button.on {
+            background-color: #fff;
+            color: #000;
         }
     </style>
 </head>
 <body>
-
-    <div id="chat-container">
-        <h2>Welcome to the Chat!</h2>
-
-        <div id="login-input">
-            <input type="text" id="username" placeholder="Enter your name" required>
-            <button onclick="login()">Submit</button>
+    <div class="streaming">
+        <div class="box">
+            <video id="streamingVideo" autoplay></video>
         </div>
-
-        <div id="chat-section" style="display:none;">
-            <div id="messages">
-                <!-- Messages will appear here -->
-            </div>
-            <div id="message-input">
-                <input type="text" id="message" placeholder="Type your message...">
-                <button onclick="sendMessage()">Send</button>
-            </div>
+    </div>
+    <div class="webcam">
+        <div class="box">
+            <video id="webcam1" autoplay muted></video>
+        </div>
+        <div class="box">
+            <video id="webcam2" autoplay muted></video>
+        </div>
+        <div class="button-container">
+            <button class="button" id="micButton">🎙</button>
+            <button class="button" id="camButton">📷</button>
+            <button class="button" id="screenButton">🖥</button>
+            <button class="button" id="youtubeButton">🎥</button>
         </div>
     </div>
 
     <script>
-        let username = '';
-        let isAdmin = false;
-        let messages = [];
-
-        // Login logic
-        function login() {
-            const nameInput = document.getElementById('username');
-            username = nameInput.value.trim();
-
-            if (username) {
-                // Check if the user is "samay" (admin)
-                if (username.toLowerCase() === 'samay') {
-                    isAdmin = true;
-                    document.getElementById('login-input').style.display = 'none';
-                    document.getElementById('chat-section').style.display = 'block';
-                    displayMessages();  // Admin can see all messages
-                } else {
-                    document.getElementById('login-input').style.display = 'none';
-                    document.getElementById('chat-section').style.display = 'block';
-                    const messagesDiv = document.getElementById('messages');
-                    messagesDiv.innerHTML += `<p><strong>${username}</strong> joined the chat!</p>`;
-                }
+        const webcamVideo1 = document.getElementById('webcam1');
+        const webcamVideo2 = document.getElementById('webcam2');
+        const streamingVideo = document.getElementById('streamingVideo');
+        const micButton = document.getElementById('micButton');
+        const camButton = document.getElementById('camButton');
+        const screenButton = document.getElementById('screenButton');
+        const youtubeButton = document.getElementById('youtubeButton');
+        let isMicOn = false;
+        let isCamOn = false;
+        let player;
+        const constraints = {
+            video: true,
+            audio: true
+        };
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(function (stream) {
+                    webcamVideo1.srcObject = stream;
+                    webcamVideo2.srcObject = stream;
+                    webcamVideo1.srcObject.getAudioTracks()[0].enabled = isMicOn;
+                    webcamVideo2.srcObject.getAudioTracks()[0].enabled = isMicOn;
+                    webcamVideo1.srcObject.getVideoTracks()[0].enabled = isCamOn;
+                    webcamVideo2.srcObject.getVideoTracks()[0].enabled = isCamOn;
+                })
+                .catch(function (error) {
+                    console.log('Error accessing webcam:', error);
+                });
+        }
+        youtubeButton.addEventListener('click', function() {
+            const youtubeVideoId = prompt("Please enter the full YouTube link:");
+            const videoId = youtubeVideoId.split('v=')[1];
+            const ampersandPosition = videoId.indexOf('&');
+            if(ampersandPosition != -1) {
+              videoId = videoId.substring(0, ampersandPosition);
             }
-        }
 
-        // Function to send a message
-        function sendMessage() {
-            const messageInput = document.getElementById('message');
-            const message = messageInput.value.trim();
-
-            if (message) {
-                // Store the message in an array
-                const messageObject = {
-                    user: username,
-                    text: message,
-                };
-                messages.push(messageObject);
-
-                // Show the message to the user
-                const messagesDiv = document.getElementById('messages');
-                if (isAdmin) {
-                    displayMessages();  // Admin can see all messages
-                } else {
-                    messagesDiv.innerHTML += `<p>Your message has been sent.</p>`;
-                }
-
-                messageInput.value = '';  // Clear the input field
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            const script = document.createElement('script');
+            script.src = 'https://www.youtube.com/iframe_api';
+            document.head.appendChild(script);
+            window.onYouTubeIframeAPIReady = function () {
+                player = new YT.Player('streamingVideo', {
+                    videoId: videoId,
+                    playerVars: {
+                        autoplay: 1,  
+                        loop: 1,      
+                        controls: 0,  
+                        showinfo: 0,  
+                        modestbranding: 1  
+                    },
+                    events: {
+                        onReady: function (event) {
+                            event.target.playVideo();  
+                        }
+                    }
+                });
+            };
+        });
+        micButton.addEventListener('click', function() {
+            isMicOn = !isMicOn;
+            webcamVideo1.srcObject.getAudioTracks()[0].enabled = isMicOn;
+            webcamVideo2.srcObject.getAudioTracks()[0].enabled = isMicOn;
+            micButton.classList.toggle('on');
+        });
+        camButton.addEventListener('click', function() {
+            isCamOn = !isCamOn;
+            webcamVideo1.srcObject.getVideoTracks()[0].enabled = isCamOn;
+            webcamVideo2.srcObject.getVideoTracks()[0].enabled = isCamOn;
+            camButton.classList.toggle('on');
+        });
+        screenButton.addEventListener('click', function() {
+            if (navigator.mediaDevices.getDisplayMedia) {
+                navigator.mediaDevices.getDisplayMedia({video: true})
+                    .then(function (stream) {
+                        if (player) {
+                            player.destroy();
+                        }
+                        streamingVideo.srcObject = stream;
+                    })
+                    .catch(function (error) {
+                        console.log('Error accessing screen:', error);
+                    });
+            } else {
+                alert('Screen sharing is not supported in this browser.');
             }
-        }
-
-        // Function to display all messages to the admin ("samay")
-        function displayMessages() {
-            const messagesDiv = document.getElementById('messages');
-            messagesDiv.innerHTML = '';  // Clear existing messages
-            messages.forEach(msg => {
-                messagesDiv.innerHTML += `<p><strong>${msg.user}:</strong> ${msg.text}</p>`;
-            });
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
+        });
     </script>
-
 </body>
 </html>
