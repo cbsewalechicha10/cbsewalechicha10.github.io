@@ -1,184 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mai aur woh anandit</title>
-    <style>
-        body {
-            display: flex;
-            height: 100vh;
-            margin: 0;
-            background-color: #fff;
-            font-family: 'Arial', sans-serif;
-            color: #000;
-        }
-        .streaming {
-            flex: 0.7;
-            display: flex;
-            flex-direction: column;
-        }
-        .webcam {
-            flex: 0.3;
-            display: flex;
-            flex-direction: column;
-        }
-        .box {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid #ccc;
-            margin: 5px;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        #webcam1, #webcam2 {
-            width: 100%;
-            height: 100%;
-            border-radius: 10px;
-            object-fit: cover;
-        }
-        #streamingVideo {
-            width: 100%;
-            height: 100%;
-            border-radius: 10px;
-        }
-        .button-container {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 20px;
-        }
-        .button {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background-color: #000;
-            color: #fff;
-            border: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 30px;
-            cursor: pointer;
-        }
-        .button.on {
-            background-color: #fff;
-            color: #000;
-        }
-    </style>
-</head>
 <body>
-    <div class="streaming">
-        <div class="box">
-            <video id="streamingVideo" autoplay></video>
-        </div>
-    </div>
-    <div class="webcam">
-        <div class="box">
-            <video id="webcam1" autoplay muted></video>
-        </div>
-        <div class="box">
-            <video id="webcam2" autoplay muted></video>
-        </div>
-        <div class="button-container">
-            <button class="button" id="micButton">🎙</button>
-            <button class="button" id="camButton">📷</button>
-            <button class="button" id="screenButton">🖥</button>
-            <button class="button" id="youtubeButton">🎥</button>
-        </div>
-    </div>
+  <h1>The Brown Bear</h1>
+  <div id="introduction">
+    <h2>About Brown Bears</h2>
+    <p>The brown bear (<em>Ursus arctos</em>) is native to parts of northern Eurasia and North America. Its conservation status is currently <strong>Least Concern</strong>.<br /><br /> There are many subspecies within the brown bear species, including the Atlas bear and the Himalayan brown bear.</p>
+    <h3>Species</h3>
+    <ul>
+      <li>Arctos</li>
+      <li>Collarus</li>
+      <li>Horribilis</li>
+      <li>Nelsoni (extinct)</li>
+    </ul>
+    <h3>Features</h3>
+    <p>Brown bears are not always completely brown. Some can be reddish or yellowish. They have very large, curved claws and huge paws. Male brown bears are often 30% larger than female brown bears. They can range from 5 feet to 9 feet from head to toe.</p>
+  </div>
+  <div id="habitat">
+    <h2>Habitat</h2>
+    <h3>Countries with Large Brown Bear Populations</h3>
+    <ol>
+      <li>Russia</li>
+      <li>United States</li>
+      <li>Canada</li>
+    </ol>
+    <h3>Countries with Small Brown Bear Populations</h3>
+    <p>Some countries with smaller brown bear populations include Armenia, Belarus, Bulgaria, China, Finland, France, Greece, India, Japan, Nepal, Poland, Romania, Slovenia, Turkmenistan, and Uzbekistan.</p>
+  </div>
+  <div id="media">
+    <h2>Media</h2>
+    <img src="https://content.codecademy.com/courses/web-101/web101-image_brownbear.jpg" alt="A Brown Bear"/>
 
-    <script>
-        const webcamVideo1 = document.getElementById('webcam1');
-        const webcamVideo2 = document.getElementById('webcam2');
-        const streamingVideo = document.getElementById('streamingVideo');
-        const micButton = document.getElementById('micButton');
-        const camButton = document.getElementById('camButton');
-        const screenButton = document.getElementById('screenButton');
-        const youtubeButton = document.getElementById('youtubeButton');
-        let isMicOn = false;
-        let isCamOn = false;
-        let player;
-        const constraints = {
-            video: true,
-            audio: true
-        };
-        if (navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia(constraints)
-                .then(function (stream) {
-                    webcamVideo1.srcObject = stream;
-                    webcamVideo2.srcObject = stream;
-                    webcamVideo1.srcObject.getAudioTracks()[0].enabled = isMicOn;
-                    webcamVideo2.srcObject.getAudioTracks()[0].enabled = isMicOn;
-                    webcamVideo1.srcObject.getVideoTracks()[0].enabled = isCamOn;
-                    webcamVideo2.srcObject.getVideoTracks()[0].enabled = isCamOn;
-                })
-                .catch(function (error) {
-                    console.log('Error accessing webcam:', error);
-                });
-        }
-        youtubeButton.addEventListener('click', function() {
-            const youtubeVideoId = prompt("Please enter the full YouTube link:");
-            const videoId = youtubeVideoId.split('v=')[1];
-            const ampersandPosition = videoId.indexOf('&');
-            if(ampersandPosition != -1) {
-              videoId = videoId.substring(0, ampersandPosition);
-            }
-
-            const script = document.createElement('script');
-            script.src = 'https://www.youtube.com/iframe_api';
-            document.head.appendChild(script);
-            window.onYouTubeIframeAPIReady = function () {
-                player = new YT.Player('streamingVideo', {
-                    videoId: videoId,
-                    playerVars: {
-                        autoplay: 1,  
-                        loop: 1,      
-                        controls: 0,  
-                        showinfo: 0,  
-                        modestbranding: 1  
-                    },
-                    events: {
-                        onReady: function (event) {
-                            event.target.playVideo();  
-                        }
-                    }
-                });
-            };
-        });
-        micButton.addEventListener('click', function() {
-            isMicOn = !isMicOn;
-            webcamVideo1.srcObject.getAudioTracks()[0].enabled = isMicOn;
-            webcamVideo2.srcObject.getAudioTracks()[0].enabled = isMicOn;
-            micButton.classList.toggle('on');
-        });
-        camButton.addEventListener('click', function() {
-            isCamOn = !isCamOn;
-            webcamVideo1.srcObject.getVideoTracks()[0].enabled = isCamOn;
-            webcamVideo2.srcObject.getVideoTracks()[0].enabled = isCamOn;
-            camButton.classList.toggle('on');
-        });
-        screenButton.addEventListener('click', function() {
-            if (navigator.mediaDevices.getDisplayMedia) {
-                navigator.mediaDevices.getDisplayMedia({video: true})
-                    .then(function (stream) {
-                        if (player) {
-                            player.destroy();
-                        }
-                        streamingVideo.srcObject = stream;
-                    })
-                    .catch(function (error) {
-                        console.log('Error accessing screen:', error);
-                    });
-            } else {
-                alert('Screen sharing is not supported in this browser.');
-            }
-        });
-    </script>
+    <video src="https://content.codecademy.com/courses/freelance-1/unit-1/lesson-2/htmlcss1-vid_brown-bear.mp4" width="320" height="240" controls>Video not supported</video>
+  </div>
 </body>
-</html>
