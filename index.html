@@ -1,67 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vishesh Verma - Professional Bio</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(to right, #ff7e5f, #feb47b);
-            color: #ffffff;
-            text-align: center;
-        }
-        .container {
-            background-color: rgba(0, 0, 0, 0.7);
-            margin: 5% auto;
-            padding: 2em;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
-        }
-        h1 {
-            color: #ffdd57;
-        }
-        h3 {
-            color: #fffb96;
-        }
-        p {
-            color: #ffffff;
-            line-height: 1.6;
-        }
-        img {
-            max-width: 100%;
-            border-radius: 10px;
-            margin-bottom: 1em;
-        }
-        .contact-info {
-            margin-top: 2em;
-            font-weight: bold;
-            color: #fffb96;
-        }
-        .footer {
-            margin-top: 2em;
-            font-size: 0.8em;
-            color: #fffb96;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Engineering College Predictor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      text-align: center;
+      padding: 40px;
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 12px;
+    }
+    input {
+      padding: 10px;
+      margin: 10px;
+      width: 80%;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Vishesh Verma</h1>
-        <h3>Owner of Sarcastic Bot</h3>
-        <p>
-            <img src="https://te.legra.ph/file/c788faffff299be55d2e1.jpg" alt="Vishesh's Image">
-        </p>
-        <p>Hello! I am Vishesh Verma, an enthusiastic individual with a keen interest in physics. I am the proud owner of the Sarcastic Bot, where we bring humor and wit to the world of AI.</p>
-        <p>I hail from India and am passionate about exploring the mysteries of the universe through the lens of science.</p>
-        <p class="contact-info">Contact me: <a href="mailto:visheshverma244@gmail.com">visheshverma244@gmail.com</a></p>
-        <p>
-            <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" alt="Animated GIF">
-        </p>
-    </div>
-    <div class="footer">© 2025 Vishesh Verma. All rights reserved.</div>
+
+  <div class="container">
+    <h2>Engineering College Predictor</h2>
+    <input type="number" id="jeeRank" placeholder="Enter JEE Main Rank">
+    <input type="number" id="percentile" placeholder="Enter 12th Board Percentile">
+    <br>
+    <button onclick="predictCollege()">Predict College</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function predictCollege() {
+      const rank = parseInt(document.getElementById('jeeRank').value);
+      const percentile = parseFloat(document.getElementById('percentile').value);
+      let result = "";
+
+      if (isNaN(rank) || isNaN(percentile)) {
+        result = "Please enter valid numbers.";
+      } else if (rank <= 5000 && percentile >= 90) {
+        result = "You can get into top-tier IITs or NITs!";
+      } else if (rank <= 25000 && percentile >= 80) {
+        result = "Chances are good for NITs and top state colleges.";
+      } else if (rank <= 50000 && percentile >= 70) {
+        result = "You may get admission in decent private universities or state colleges.";
+      } else {
+        result = "Consider private colleges or use state quota; improve in next attempt if possible.";
+      }
+
+      document.getElementById('result').textContent = result;
+    }
+  </script>
+
 </body>
 </html>
