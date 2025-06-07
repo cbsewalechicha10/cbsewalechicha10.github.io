@@ -26,7 +26,6 @@
       <option value="css">CSS</option>
       <option value="javascript">JavaScript</option>
       <option value="python">Python</option>
-      <!-- Add more languages here -->
     </select>
     <button id="run">Run</button>
   </div>
@@ -34,7 +33,6 @@
   <div id="output"></div>
 
   <script>
-    // Initialize Ace Editor
     const editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
     editor.session.setMode("ace/mode/html");
@@ -47,8 +45,6 @@
     langSelect.addEventListener('change', () => {
       const lang = langSelect.value;
       editor.session.setMode(`ace/mode/${lang}`);
-      // Clear editor when language changes if desired
-      // editor.session.setValue('');
     });
 
     runBtn.addEventListener('click', () => {
@@ -66,32 +62,32 @@
         } else if (lang === 'css') {
           content = `<style>${code}</style>`;
         } else if (lang === 'javascript') {
-          content = `<script>${code}</script>`;
+          content = `<script>${code}<\/script>`;
         }
         doc.open();
         doc.write(content);
         doc.close();
-
       } else if (lang === 'python') {
-        // Set up Skulpt
         function builtinRead(x) {
           if (Sk.builtinFiles === undefined || Sk.builtinFiles['files'][x] === undefined)
             throw `File not found: '${x}'`;
           return Sk.builtinFiles['files'][x];
         }
-        Sk.configure({ output: text => {
+        Sk.configure({
+          output: text => {
             let pre = outputDiv.querySelector('pre');
             if (!pre) {
               pre = document.createElement('pre');
               outputDiv.appendChild(pre);
             }
             pre.textContent += text;
-          }, read: builtinRead });
+          },
+          read: builtinRead
+        });
         Sk.importMainWithBody('<stdin>', false, code, true)
           .catch(err => {
             outputDiv.innerHTML = '<pre>' + err.toString() + '</pre>';
           });
-
       } else {
         outputDiv.innerHTML = `<pre>Language '${lang}' is not supported yet.</pre>`;
       }
