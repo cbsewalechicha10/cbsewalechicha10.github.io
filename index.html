@@ -1,217 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JEE College Predictor 2025</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        label {
-            display: block;
-            margin: 10px 0 5px;
-        }
-        input, select {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .error {
-            color: red;
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi-Language Code Runner</title>
+  <!-- Ace Editor -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.14/ace.js" integrity="sha512-+Tt6OktYpPRGvNPZnlzUFTgEQJVbSv3hE5B/p1xpweUoMZs/Z1+hnX49dQTVYQU9M5Jk+oLZl2wD+qflg0hMVA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Skulpt for Python -->
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/skulpt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/skulpt-stdlib.js"></script>
+  <style>
+    body { font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; margin: 0; }
+    #controls { padding: 10px; background: #f4f4f4; display: flex; gap: 10px; align-items: center; }
+    #editor { flex: 1; }
+    #output { flex: 1; border-top: 1px solid #ddd; }
+    iframe { width: 100%; height: 100%; border: none; }
+    pre { margin: 0; padding: 10px; height: 100%; overflow: auto; background: #272822; color: #f8f8f2; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>JEE College Predictor 2025</h1>
-        <form id="predictorForm">
-            <label for="rank">JEE Main Rank:</label>
-            <input type="number" id="rank" placeholder="Enter your JEE Main Rank" required>
-            
-            <label for="category">Category:</label>
-            <select id="category" required>
-                <option value="GEN">General (GEN)</option>
-                <option value="OBC">OBC-NCL</option>
-                <option value="SC">SC</option>
-                <option value="ST">ST</option>
-            </select>
-            
-            <label for="gender">Gender:</label>
-            <select id="gender" required>
-                <option value="Gender-Neutral">Gender-Neutral</option>
-                <option value="Female">Female</option>
-            </select>
-            
-            <label for="state">Home State:</label>
-            <select id="state" required>
-                <option value="All">All States</option>
-                <option value="Delhi">Delhi</option>
-                <option value="Madhya Pradesh">Madhya Pradesh</option>
-                <option value="Uttar Pradesh">Uttar Pradesh</option>
-                <!-- Add more states as needed -->
-            </select>
-            
-            <button type="submit">Predict Colleges</button>
-            <p class="error" id="errorMsg">Please enter a valid rank (1 or higher).</p>
-        </form>
-        
-        <table id="resultTable" style="display: none;">
-            <thead>
-                <tr>
-                    <th>College Name</th>
-                    <th>Branch</th>
-                    <th>Counseling</th>
-                    <th>Category</th>
-                    <th>Opening Rank</th>
-                    <th>Closing Rank</th>
-                </tr>
-            </thead>
-            <tbody id="collegeList"></tbody>
-        </table>
-    </div>
+  <div id="controls">
+    <label for="lang">Language:</label>
+    <select id="lang">
+      <option value="html">HTML</option>
+      <option value="css">CSS</option>
+      <option value="javascript">JavaScript</option>
+      <option value="python">Python</option>
+      <!-- Add more languages here -->
+    </select>
+    <button id="run">Run</button>
+  </div>
+  <div id="editor"></div>
+  <div id="output"></div>
 
-    <script>
-        // Sample static data (replace with API or server-side data fetching)
-        const collegeData = [
-            {
-                name: "NIT Trichy",
-                branch: "Computer Science",
-                counseling: "JoSAA",
-                category: "GEN",
-                openingRank: 500,
-                closingRank: 5000,
-                state: "All"
-            },
-            {
-                name: "NIT Warangal",
-                branch: "Electronics",
-                counseling: "JoSAA",
-                category: "OBC",
-                openingRank: 2000,
-                closingRank: 8000,
-                state: "All"
-            },
-            {
-                name: "DTU Delhi",
-                branch: "Computer Science",
-                counseling: "JAC Delhi",
-                category: "GEN",
-                openingRank: 1000,
-                closingRank: 6000,
-                state: "Delhi"
-            },
-            {
-                name: "SGSITS Indore",
-                branch: "Mechanical",
-                counseling: "MP-DTE",
-                category: "GEN",
-                openingRank: 10000,
-                closingRank: 50000,
-                state: "Madhya Pradesh"
-            },
-            {
-                name: "IIIT Hyderabad",
-                branch: "Computer Science",
-                counseling: "CSAB",
-                category: "GEN",
-                openingRank: 1000,
-                closingRank: 4000,
-                state: "All"
+  <script>
+    // Initialize Ace Editor
+    const editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.session.setMode("ace/mode/html");
+    editor.session.setValue("<!-- write your code here -->");
+
+    const langSelect = document.getElementById('lang');
+    const runBtn = document.getElementById('run');
+    const outputDiv = document.getElementById('output');
+
+    langSelect.addEventListener('change', () => {
+      const lang = langSelect.value;
+      editor.session.setMode(`ace/mode/${lang}`);
+      // Clear editor when language changes if desired
+      // editor.session.setValue('');
+    });
+
+    runBtn.addEventListener('click', () => {
+      const code = editor.getValue();
+      const lang = langSelect.value;
+      outputDiv.innerHTML = '';
+
+      if (lang === 'html' || lang === 'css' || lang === 'javascript') {
+        const iframe = document.createElement('iframe');
+        outputDiv.appendChild(iframe);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        let content = '';
+        if (lang === 'html') {
+          content = code;
+        } else if (lang === 'css') {
+          content = `<style>${code}</style>`;
+        } else if (lang === 'javascript') {
+          content = `<script>${code}</script>`;
+        }
+        doc.open();
+        doc.write(content);
+        doc.close();
+
+      } else if (lang === 'python') {
+        // Set up Skulpt
+        function builtinRead(x) {
+          if (Sk.builtinFiles === undefined || Sk.builtinFiles['files'][x] === undefined)
+            throw `File not found: '${x}'`;
+          return Sk.builtinFiles['files'][x];
+        }
+        Sk.configure({ output: text => {
+            let pre = outputDiv.querySelector('pre');
+            if (!pre) {
+              pre = document.createElement('pre');
+              outputDiv.appendChild(pre);
             }
-            // Add more data as needed
-        ];
+            pre.textContent += text;
+          }, read: builtinRead });
+        Sk.importMainWithBody('<stdin>', false, code, true)
+          .catch(err => {
+            outputDiv.innerHTML = '<pre>' + err.toString() + '</pre>';
+          });
 
-        document.getElementById('predictorForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const rank = parseInt(document.getElementById('rank').value);
-            const category = document.getElementById('category').value;
-            const gender = document.getElementById('gender').value;
-            const state = document.getElementById('state').value;
-            const errorMsg = document.getElementById('errorMsg');
-            const resultTable = document.getElementById('resultTable');
-            const collegeList = document.getElementById('collegeList');
-
-            // Validation
-            if (rank < 1 || isNaN(rank)) {
-                errorMsg.style.display = 'block';
-                resultTable.style.display = 'none';
-                return;
-            }
-            errorMsg.style.display = 'none';
-
-            // Filter colleges based on input
-            const filteredColleges = collegeData.filter(college => {
-                return (college.category === category || college.category === "GEN") &&
-                       (college.state === state || college.state === "All" || state === "All") &&
-                       rank >= college.openingRank && rank <= college.closingRank;
-            });
-
-            // Clear previous results
-            collegeList.innerHTML = '';
-
-            // Display results
-            if (filteredColleges.length > 0) {
-                filteredColleges.forEach(college => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${college.name}</td>
-                        <td>${college.branch}</td>
-                        <td>${college.counseling}</td>
-                        <td>${college.category}</td>
-                        <td>${college.openingRank}</td>
-                        <td>${college.closingRank}</td>
-                    `;
-                    collegeList.appendChild(row);
-                });
-                resultTable.style.display = 'table';
-            } else {
-                collegeList.innerHTML = '<tr><td colspan="6">No colleges found for your rank and preferences.</td></tr>';
-                resultTable.style.display = 'table';
-            }
-        });
-    </script>
+      } else {
+        outputDiv.innerHTML = `<pre>Language '${lang}' is not supported yet.</pre>`;
+      }
+    });
+  </script>
 </body>
 </html>
