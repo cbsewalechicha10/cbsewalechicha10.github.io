@@ -1,95 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Multi-Language Code Runner</title>
-  <!-- Ace Editor -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.14/ace.js" integrity="sha512-+Tt6OktYpPRGvNPZnlzUFTgEQJVbSv3hE5B/p1xpweUoMZs/Z1+hnX49dQTVYQU9M5Jk+oLZl2wD+qflg0hMVA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <!-- Skulpt for Python -->
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Two‑Box Multi‑Language Runner</title>
+  <!-- Skulpt for in‑browser Python: -->
   <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/skulpt.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/skulpt-stdlib.js"></script>
   <style>
-    body { font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; margin: 0; }
-    #controls { padding: 10px; background: #f4f4f4; display: flex; gap: 10px; align-items: center; }
-    #editor { flex: 1; }
-    #output { flex: 1; border-top: 1px solid #ddd; }
-    iframe { width: 100%; height: 100%; border: none; }
-    pre { margin: 0; padding: 10px; height: 100%; overflow: auto; background: #272822; color: #f8f8f2; }
+    body { font-family: sans-serif; padding: 20px; }
+    label, select, button { font-size: 1rem; }
+    textarea {
+      width: 100%; box-sizing: border-box;
+      font-family: monospace; font-size: 1rem;
+      margin-top: 10px; padding: 8px;
+    }
+    #codeBox { height: 200px; }
+    #outputContainer { margin-top: 10px; }
+    #outputText { width: 100%; height: 200px; background: #f0f0f0; }
+    iframe { width: 100%; height: 200px; border: 1px solid #ccc; }
+    button { margin-top: 10px; padding: 8px 16px; }
   </style>
 </head>
 <body>
-  <div id="controls">
-    <label for="lang">Language:</label>
-    <select id="lang">
-      <option value="html">HTML</option>
-      <option value="css">CSS</option>
-      <option value="javascript">JavaScript</option>
-      <option value="python">Python</option>
-    </select>
-    <button id="run">Run</button>
-  </div>
-  <div id="editor"></div>
-  <div id="output"></div>
+
+  <label for="lang">Language:</label>
+  <select id="lang">
+    <option value="html">HTML</option>
+    <option value="css">CSS</option>
+    <option value="javascript">JavaScript</option>
+    <option value="python">Python</option>
+    <!-- e.g. add: <option value="java">Java</option>, <option value="c">C</option> … -->
+  </select>
+
+  <!-- INPUT BOX -->
+  <textarea id="codeBox" placeholder="Type your code here…"></textarea>
+  <button id="runBtn">Run</button>
+
+  <!-- OUTPUT PANE -->
+  <div id="outputContainer"></div>
 
   <script>
-    const editor = ace.edit("editor");
-    editor.setTheme("ace/theme/monokai");
-    editor.session.setMode("ace/mode/html");
-    editor.session.setValue("<!-- write your code here -->");
-
-    const langSelect = document.getElementById('lang');
-    const runBtn = document.getElementById('run');
-    const outputDiv = document.getElementById('output');
-
-    langSelect.addEventListener('change', () => {
-      const lang = langSelect.value;
-      editor.session.setMode(`ace/mode/${lang}`);
-    });
+    const runBtn = document.getElementById('runBtn');
+    const langSel = document.getElementById('lang');
+    const codeBox = document.getElementById('codeBox');
+    const outputContainer = document.getElementById('outputContainer');
 
     runBtn.addEventListener('click', () => {
-      const code = editor.getValue();
-      const lang = langSelect.value;
-      outputDiv.innerHTML = '';
+      const code = codeBox.value;
+      const lang = langSel.value;
+      outputContainer.innerHTML = '';
 
-      if (lang === 'html' || lang === 'css' || lang === 'javascript') {
+      if (lang === 'html' || lang === 'css') {
+        // render preview in iframe
         const iframe = document.createElement('iframe');
-        outputDiv.appendChild(iframe);
+        outputContainer.appendChild(iframe);
         const doc = iframe.contentDocument || iframe.contentWindow.document;
-        let content = '';
         if (lang === 'html') {
-          content = code;
-        } else if (lang === 'css') {
-          content = `<style>${code}</style>`;
-        } else if (lang === 'javascript') {
-          content = `<script>${code}<\/script>`;
+          doc.open(); doc.write(code); doc.close();
+        } else {
+          // wrap CSS in <style>
+          doc.open();
+          doc.write(`<html><head><style>${code}</style></head><body></body></html>`);
+          doc.close();
         }
-        doc.open();
-        doc.write(content);
-        doc.close();
+
+      } else if (lang === 'javascript') {
+        // capture console.log + return value
+        const outTA = document.createElement('textarea');
+        outTA.id = 'outputText';
+        outTA.readOnly = true;
+        outputContainer.appendChild(outTA);
+
+        // override console.log
+        const log = console.log;
+        console.log = function(...args) {
+          outTA.value += args.join(' ') + '\\n';
+          log.apply(console, args);
+        };
+
+        try {
+          const result = eval(code);
+          if (result !== undefined) outTA.value += String(result) + '\\n';
+        } catch (err) {
+          outTA.value += err + '\\n';
+        }
+        console.log = log;  // restore
+
       } else if (lang === 'python') {
+        // use Skulpt
+        const outTA = document.createElement('textarea');
+        outTA.id = 'outputText';
+        outTA.readOnly = true;
+        outputContainer.appendChild(outTA);
+
         function builtinRead(x) {
           if (Sk.builtinFiles === undefined || Sk.builtinFiles['files'][x] === undefined)
             throw `File not found: '${x}'`;
           return Sk.builtinFiles['files'][x];
         }
+
         Sk.configure({
-          output: text => {
-            let pre = outputDiv.querySelector('pre');
-            if (!pre) {
-              pre = document.createElement('pre');
-              outputDiv.appendChild(pre);
-            }
-            pre.textContent += text;
-          },
+          output: txt => { outTA.value += txt; },
           read: builtinRead
         });
+
         Sk.importMainWithBody('<stdin>', false, code, true)
-          .catch(err => {
-            outputDiv.innerHTML = '<pre>' + err.toString() + '</pre>';
-          });
+          .catch(err => { outTA.value += err.toString() + '\\n'; });
+
       } else {
-        outputDiv.innerHTML = `<pre>Language '${lang}' is not supported yet.</pre>`;
+        // placeholder for other languages
+        const outTA = document.createElement('textarea');
+        outTA.id = 'outputText';
+        outTA.readOnly = true;
+        outTA.value = `Execution for “${lang}” not implemented.\n` +
+          `Would you like an in‑browser compiler (e.g. via WebAssembly) or a server endpoint?`;
+        outputContainer.appendChild(outTA);
       }
     });
   </script>
