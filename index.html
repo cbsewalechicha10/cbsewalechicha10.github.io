@@ -1,146 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Two‑Box Code Runner</title>
-  <!-- Skulpt for Python -->
-  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/skulpt.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/skulpt-stdlib.js"></script>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      max-width: 800px;
-      margin: auto;
-    }
-    label, select, button {
-      font-size: 1rem;
-    }
-    h2 { margin: 16px 0 8px; }
-    #inputBox, #outputBox {
-      width: 100%;
-      box-sizing: border-box;
-      font-family: monospace;
-      font-size: 1rem;
-      padding: 8px;
-      border: 1px solid #ccc;
-      min-height: 200px;
-      resize: vertical;
-    }
-    #runBtn {
-      display: block;
-      margin: 16px auto;
-      padding: 8px 16px;
-      font-size: 1rem;
-    }
-    /* inside the outputBox we'll inject either an <iframe> or a <textarea> */
-    #outputBox iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-    #outputBox textarea {
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: transparent;
-      resize: none;
-    }
-  </style>
-</head>
-<body>
 
-  <label for="lang">Language:</label>
-  <select id="lang">
-    <option value="html">HTML</option>
-    <option value="css">CSS</option>
-    <option value="javascript">JavaScript</option>
-    <option value="python">Python</option>
-    <!-- add more here -->
-  </select>
-
-  <h2>Input</h2>
-  <textarea id="inputBox" placeholder="Type your code here…"></textarea>
-
-  <button id="runBtn">Run</button>
-
-  <h2>Output</h2>
-  <div id="outputBox"></div>
-
-  <script>
-    const langSel = document.getElementById('lang');
-    const inputBox = document.getElementById('inputBox');
-    const outputBox = document.getElementById('outputBox');
-    const runBtn = document.getElementById('runBtn');
-
-    runBtn.addEventListener('click', () => {
-      const code = inputBox.value;
-      const lang = langSel.value;
-      outputBox.innerHTML = '';  // clear out
-
-      if (lang === 'html' || lang === 'css') {
-        // render into iframe
-        const iframe = document.createElement('iframe');
-        outputBox.appendChild(iframe);
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-        if (lang === 'html') {
-          doc.open(); doc.write(code); doc.close();
-        } else {
-          doc.open();
-          doc.write(`<html><head><style>${code}</style></head><body></body></html>`);
-          doc.close();
-        }
-
-      } else if (lang === 'javascript') {
-        // make a textarea to capture console.log & return
-        const ta = document.createElement('textarea');
-        outputBox.appendChild(ta);
-        ta.readOnly = true;
-
-        // capture console.log
-        const origLog = console.log;
-        console.log = (...args) => {
-          ta.value += args.join(' ') + '\n';
-          origLog.apply(console, args);
-        };
-
-        try {
-          const result = eval(code);
-          if (result !== undefined) ta.value += result + '\n';
-        } catch (err) {
-          ta.value += err + '\n';
-        }
-        console.log = origLog;
-
-      } else if (lang === 'python') {
-        // Skulpt integration
-        const ta = document.createElement('textarea');
-        outputBox.appendChild(ta);
-        ta.readOnly = true;
-
-        function builtinRead(x) {
-          if (Sk.builtinFiles === undefined || Sk.builtinFiles['files'][x] === undefined)
-            throw `File not found: '${x}'`;
-          return Sk.builtinFiles['files'][x];
-        }
-
-        Sk.configure({
-          output: text => { ta.value += text; },
-          read: builtinRead
-        });
-
-        Sk.importMainWithBody('<stdin>', false, code, true)
-          .catch(err => { ta.value += err.toString() + '\n'; });
-
-      } else {
-        // placeholder for other languages
-        const ta = document.createElement('textarea');
-        outputBox.appendChild(ta);
-        ta.readOnly = true;
-        ta.value = `Execution for “${lang}” isn’t implemented yet.`;
-      }
-    });
-  </script>
-</body>
+<html>
+    <head>
+        <title>HTML | Introduction</title>
+    </head>
+    <body>
+        <ol>
+        <div id="introduction">
+            <h2><li>Introduction to HTML:</li></h2>
+            <p>
+               It stands for Hyper Text MarkUp Language:
+               <ul>
+                <li>A markup language is a computer language that defines the structure and presentation of raw text.</li>
+                <li>In HTML, the computer can interpret raw text that is wrapped in HTML elements.</li>
+               </ul>
+               <br>After learning HTML you will be able to create simple webpage like of news, blog or article.
+               <br>In which you can add images, text, videos and links but yeah may be they look bit suss or dull or may be ugly :(
+               <br>But don't worry after Html we will learn Css and java script that will help us to decorate web page completly.
+            </p>
+        </div> 
+        <div id="Anatomy">
+            <h2><li>Anatomy of HTML:</li></h2>
+            <p>
+                HTML is composed of elements. These elements structure the webpage and define its content.
+                <br>Html element is consits:
+                <ul>
+                    <li><u>Opening tag</u>: Greater than sign, tag name and less than sign.</li>
+                    <li><u>Content</u>: Every raw text, images, video or link inside the opening and ending tag is known as content of that element.</li>
+                    <li><u>Closing tag</u>: Greater than sign, oblig or slash sign, tag name and less than sign.</li>
+                    <li><u>HTML tag</u>: the element name, surrounded by an opening (<) and closing (>) angle bracket.</li>
+                    <li><u>HTML element</u>: a unit of content in an HTML document formed by HTML tags and the text or media it contains.</li>
+                </ul>
+                <br>Html element's name is the tag name that occupied by opening and closing tag. And the whole value opening tag, closing tag and content are called together as <strong>'HTML elemnts'.</strong>
+                <br>Html element is looks like:<br><br>&lt;tagname&gt; ....Content..... &lt;/tagname&gt;<br><br>For example:<br>&lt;h1&gt;Krishna&lt;/h1&&gt;
+            </p>
+        </div>
+        <div id="body">
+            <h2><li>Body:</li></h2>
+            <p>
+                One of the most important HTML element we used to create web page is 'body'. Only content inside the opening and closing body tags can be displayed to the screen.
+                <br>It looks like:<br><br>&lt;body&gt;<br>....Content.....<br>&lt;/body&gt;
+                <br><br>Once your webpage has body, you can add multiple content like; text, images, videos, link and many more.
+                <br>We use it like:<br><br>&lt;body&gt; <br>&lt;p&gt;What's up, doc? &lt;/p&gt;<br>&lt;/body&gt;
+            </p>
+        </div>
+        </ol>
+    </body>
 </html>
